@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ByteX Studio - Gift Store</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>ByteX Studio</h1>
+      <p class="tagline">Gift Store</p>
+    </header>
+
+    <main class="main">
+      <!-- Produk -->
+      <section class="card products-section">
+        <h2>🛍️ Produk</h2>
+        <div class="products-grid" id="productsGrid">
+          <!-- Produk otomatis dari products.json -->
+        </div>
+      </section>
+
+      <!-- Keranjang -->
+      <section class="card cart-section">
+        <h2>🛒 Keranjang</h2>
+        <div class="cart-items">
+          <p class="cart-empty" id="cartEmpty">Keranjang kosong</p>
+          <div id="cartItemsList"></div>
+        </div>
+
+        <div class="cart-summary" id="cartSummary" style="display: none;">
+          <div class="summary-row">
+            <span>Subtotal:</span>
+            <span id="subtotalDisplay">Rp 0</span>
+          </div>
+
+          <div class="discount-section">
+            <h3>🎟️ Diskon</h3>
+            <div class="discount-inputs">
+              <div class="input-group">
+                <label for="discountPercent">Diskon (%)</label>
+                <input type="number" id="discountPercent" min="0" max="100" placeholder="0">
+              </div>
+              <div class="input-group">
+                <label for="discountNominal">Diskon (Rp)</label>
+                <input type="number" id="discountNominal" min="0" placeholder="0">
+              </div>
+              <button class="btn btn-discount" type="button">Terapkan Diskon</button>
+            </div>
+
+            <div class="summary-row discount-row" id="discountDisplayRow" style="display: none;">
+              <span>Diskon:</span>
+              <span id="discountDisplay">Rp 0</span>
+            </div>
+          </div>
+
+          <div class="summary-row total-row">
+            <span>Total:</span>
+            <span id="totalDisplay">Rp 0</span>
+          </div>
+        </div>
+
+        <div class="cart-actions">
+          <button class="btn btn-bon" type="button">➜ Buat Bon</button>
+          <button class="btn btn-copy-bon" type="button">Copy Bon</button>
+          <button class="btn btn-download" type="button">Download .txt</button>
+          <button class="btn btn-reset" type="button">Reset Keranjang</button>
+        </div>
+      </section>
+
+      <!-- Bon -->
+      <section class="card bon-section">
+        <h2>🧾 Bon</h2>
+        <div class="bon-display" id="bonDisplay">
+          <p class="bon-placeholder">Klik "Buat Bon" untuk generate struk</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast">Bon berhasil disalin</div>
+
+  <script src="script.js"></script>
+</body>
+</html>

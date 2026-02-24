@@ -1,0 +1,27 @@
+[
+  {
+    "id": "Code-Private-Server",
+    "name": "Code Private Server",
+    "price": 10000
+  },
+  {
+    "id": "Plate-Randomizer",
+    "name": "Plate Randomizer",
+    "price": 6000
+  },
+  {
+    "id": "Modular-Traffic-Lights",
+    "name": "Modular Traffic Lights",
+    "price": 10000
+  },
+  {
+    "id": "Main-Menu-V2",
+    "name": "Main Menu V2",
+    "price": 45000
+  },
+  {
+    "id": "CDID-Extention",
+    "name": "Main Menu CDID Theme",
+    "price": 20000
+  }
+]
