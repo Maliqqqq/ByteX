@@ -1,87 +1,654 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ByteX Studio - Gift Store</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+
+<title>ByteX POS</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+
+
+<style>
+
+body{
+font-family:'Inter',sans-serif;
+background:radial-gradient(circle at top,#1a1a1a,#050505);
+}
+
+.glass{
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(20px);
+border:1px solid rgba(255,255,255,0.08);
+}
+
+.btn{
+transition:all .18s ease;
+}
+
+.btn:hover{
+transform:translateY(-2px) scale(1.03);
+}
+
+.btn:active{
+transform:scale(.96);
+}
+
+.fade{
+animation:fade .2s ease;
+}
+
+@keyframes fade{
+from{opacity:0;transform:translateY(6px)}
+to{opacity:1;transform:translateY(0)}
+}
+
+</style>
+
 </head>
-<body>
-  <div class="container">
-    <header class="header">
-      <h1>ByteX Studio</h1>
-      <p class="tagline">Gift Store</p>
-    </header>
 
-    <main class="main">
-      <!-- Produk -->
-      <section class="card products-section">
-        <h2>🛍️ Produk</h2>
-        <div class="products-grid" id="productsGrid">
-          <!-- Produk otomatis dari products.json -->
-        </div>
-      </section>
+<body class="text-zinc-200 p-6 min-h-screen">
 
-      <!-- Keranjang -->
-      <section class="card cart-section">
-        <h2>🛒 Keranjang</h2>
-        <div class="cart-items">
-          <p class="cart-empty" id="cartEmpty">Keranjang kosong</p>
-          <div id="cartItemsList"></div>
-        </div>
+<div class="max-w-6xl mx-auto">
 
-        <div class="cart-summary" id="cartSummary" style="display: none;">
-          <div class="summary-row">
-            <span>Subtotal:</span>
-            <span id="subtotalDisplay">Rp 0</span>
-          </div>
+<h1 class="text-3xl font-semibold mb-8 tracking-tight">
+ByteX POS
+</h1>
 
-          <div class="discount-section">
-            <h3>🎟️ Diskon</h3>
-            <div class="discount-inputs">
-              <div class="input-group">
-                <label for="discountPercent">Diskon (%)</label>
-                <input type="number" id="discountPercent" min="0" max="100" placeholder="0">
-              </div>
-              <div class="input-group">
-                <label for="discountNominal">Diskon (Rp)</label>
-                <input type="number" id="discountNominal" min="0" placeholder="0">
-              </div>
-              <button class="btn btn-discount" type="button">Terapkan Diskon</button>
-            </div>
+<div class="relative inline-block text-left mb-8 z-50" id="currencyDropdown">
 
-            <div class="summary-row discount-row" id="discountDisplayRow" style="display: none;">
-              <span>Diskon:</span>
-              <span id="discountDisplay">Rp 0</span>
-            </div>
-          </div>
+<button onclick="toggleCurrencyDropdown()"
+class="glass flex items-center gap-2 px-4 py-2 rounded-xl text-sm hover:bg-white/10 transition">
 
-          <div class="summary-row total-row">
-            <span>Total:</span>
-            <span id="totalDisplay">Rp 0</span>
-          </div>
-        </div>
+<span id="currencyLabel">Rupiah</span>
 
-        <div class="cart-actions">
-          <button class="btn btn-bon" type="button">➜ Buat Bon</button>
-          <button class="btn btn-copy-bon" type="button">Copy Bon</button>
-          <button class="btn btn-download" type="button">Download .txt</button>
-          <button class="btn btn-reset" type="button">Reset Keranjang</button>
-        </div>
-      </section>
+<svg id="currencyArrow"
+class="w-4 h-4 transition-transform duration-200"
+fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+d="M19 9l-7 7-7-7"/>
+</svg>
 
-      <!-- Bon -->
-      <section class="card bon-section">
-        <h2>🧾 Bon</h2>
-        <div class="bon-display" id="bonDisplay">
-          <p class="bon-placeholder">Klik "Buat Bon" untuk generate struk</p>
-        </div>
-      </section>
-    </main>
-  </div>
+</button>
 
-  <div class="toast" id="toast">Bon berhasil disalin</div>
+<div id="currencyMenu"
+class="absolute left-0 mt-2 w-44 rounded-xl glass shadow-xl opacity-0 scale-95 pointer-events-none transition-all duration-200 z-50">
 
-  <script src="script.js"></script>
+<button onclick="setCurrency('IDR','Rupiah',this)"
+class="currencyItem flex justify-between w-full text-left px-4 py-2 hover:bg-white/10 rounded-t-xl">
+<span>Rupiah</span>
+<span class="check">✔</span>
+</button>
+
+<button onclick="setCurrency('MYR','MYR',this)"
+class="currencyItem flex justify-between w-full text-left px-4 py-2 hover:bg-white/10">
+<span>MYR</span>
+<span class="check hidden">✔</span>
+</button>
+
+<button onclick="setCurrency('ROBUX','Robux',this)"
+class="currencyItem flex justify-between w-full text-left px-4 py-2 hover:bg-white/10 rounded-b-xl">
+<span>Robux</span>
+<span class="check hidden">✔</span>
+</button>
+
+</div>
+
+</div>
+
+<div class="grid lg:grid-cols-2 gap-8">
+
+<div class="glass rounded-2xl p-6 shadow-xl">
+
+<input
+id="search"
+oninput="renderProducts()"
+placeholder="Search product..."
+class="w-full bg-black/40 px-4 py-2 rounded-xl mb-4"
+/>
+
+<div id="productList" class="space-y-2 mb-6"></div>
+
+<h3 class="text-sm text-zinc-400 mb-2">
+Custom Product
+</h3>
+
+<input id="customName" placeholder="Name"
+class="w-full bg-black/40 rounded-xl px-3 py-2 mb-2"/>
+
+<input id="customPrice" placeholder="Price (Rp)"
+class="w-full bg-black/40 rounded-xl px-3 py-2 mb-3"/>
+
+<button onclick="addCustom()"
+class="btn bg-white text-black px-4 py-2 rounded-xl font-medium">
+Add Product
+</button>
+
+</div>
+
+<div class="glass rounded-2xl p-6 shadow-xl flex flex-col">
+
+<h2 class="font-semibold mb-4">
+Receipt
+</h2>
+
+<div id="cartItems" class="space-y-3 mb-4"></div>
+
+<div class="mb-4 space-y-1">
+
+<div class="flex justify-between text-sm">
+<span>Subtotal</span>
+<span id="subtotalText">Rp 0</span>
+</div>
+
+<div class="flex justify-between text-sm text-zinc-400">
+<span>Discount</span>
+<span id="discountText">Rp 0</span>
+</div>
+
+<div class="flex justify-between text-base font-semibold">
+<span>Total</span>
+<span id="totalText">Rp 0</span>
+</div>
+
+<div class="w-full bg-zinc-800 h-2 rounded-full overflow-hidden mt-2">
+<div id="subtotalBar"
+class="bg-white h-full w-0 transition-all duration-300"></div>
+</div>
+
+</div>
+
+<div class="flex gap-2 mb-4">
+
+<input id="discPercent" oninput="renderCart()" placeholder="%"
+class="flex-1 bg-black/40 rounded-xl px-3 py-2"/>
+
+<input id="discAmount" oninput="renderCart()" placeholder="Rp"
+class="flex-1 bg-black/40 rounded-xl px-3 py-2"/>
+
+</div>
+
+<button onclick="generateBon()"
+class="btn bg-white text-black px-4 py-2 rounded-xl mb-4">
+Generate Receipt
+</button>
+
+<button id="openReceiptBtn"
+onclick="openSuccess()"
+class="btn bg-zinc-800 px-4 py-2 rounded-xl mb-4 hidden">
+Show Payment Receipt
+</button>
+
+<div class="bg-black/40 rounded-xl p-4 text-sm mb-3">
+
+<div class="font-medium mb-2">
+Preview
+</div>
+
+<pre id="receiptPreview" class="whitespace-pre-wrap text-zinc-300"></pre>
+
+</div>
+
+<button onclick="copyBon()"
+class="btn bg-zinc-800 px-4 py-2 rounded-xl">
+Copy Receipt
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div id="successModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50">
+
+<div class="text-center">
+
+<div id="successReceipt" class="glass rounded-3xl p-8 w-[340px] text-center fade">
+
+<div class="text-4xl mb-2">✓</div>
+
+<h2 class="text-xl font-semibold mb-1">
+Payment Successful
+</h2>
+
+<p class="text-sm text-zinc-400 mb-6">
+Thank you for your purchase
+</p>
+
+<div class="bg-black/40 rounded-xl p-4 text-sm space-y-2 text-left">
+
+<div class="flex justify-between">
+<span class="text-zinc-400">Order ID</span>
+<span id="successID"></span>
+</div>
+
+<div class="flex justify-between">
+<span class="text-zinc-400">Time</span>
+<span id="successTime"></span>
+</div>
+
+<div class="flex justify-between">
+<span class="text-zinc-400">Items</span>
+<span id="successItems"></span>
+</div>
+
+<div class="flex justify-between font-medium">
+<span>Total Paid</span>
+<span id="successTotal"></span>
+</div>
+
+</div>
+
+</div>
+
+<div id="renderButtons" class="flex gap-3 justify-center mt-4">
+
+<button onclick="renderReceiptImage()"
+class="btn bg-white text-black px-4 py-2 rounded-xl text-sm">
+Render Image
+</button>
+
+<button onclick="closeSuccess()"
+class="btn bg-zinc-800 px-4 py-2 rounded-xl text-sm">
+Close
+</button>
+
+</div>
+
+<div id="imageButtons" class="hidden flex gap-3 justify-center mt-4">
+
+<button onclick="copyImage()"
+class="btn bg-white text-black px-4 py-2 rounded-xl text-sm">
+Copy Image
+</button>
+
+<button onclick="downloadImage()"
+class="btn bg-zinc-800 px-4 py-2 rounded-xl text-sm">
+Download PNG
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+let products=[]
+let cart=[]
+let currentCurrency="IDR"
+let lastTotal=0
+let renderedCanvas=null
+let currentOrderID=""
+
+const RP_PER_MYR=3333.33
+const RP_PER_ROBUX=66.67
+
+fetch("products.json")
+.then(res=>res.json())
+.then(data=>{
+products=data
+renderProducts()
+})
+
+function formatPrice(price){
+
+if(currentCurrency==="IDR")
+return "Rp "+price.toLocaleString()
+
+if(currentCurrency==="MYR")
+return (price/RP_PER_MYR).toFixed(2)+" MYR"
+
+if(currentCurrency==="ROBUX")
+return Math.floor(price/RP_PER_ROBUX)+" R$"
+
+}
+
+function toggleCurrencyDropdown(){
+
+let menu=document.getElementById("currencyMenu")
+let arrow=document.getElementById("currencyArrow")
+
+menu.classList.toggle("opacity-0")
+menu.classList.toggle("scale-95")
+menu.classList.toggle("pointer-events-none")
+
+arrow.classList.toggle("rotate-180")
+
+}
+
+document.addEventListener("click",function(e){
+
+let dropdown=document.getElementById("currencyDropdown")
+
+if(!dropdown.contains(e.target)){
+
+let menu=document.getElementById("currencyMenu")
+let arrow=document.getElementById("currencyArrow")
+
+menu.classList.add("opacity-0","scale-95","pointer-events-none")
+arrow.classList.remove("rotate-180")
+
+}
+
+})
+
+function setCurrency(cur,label,el){
+
+currentCurrency=cur
+document.getElementById("currencyLabel").innerText=label
+
+document.querySelectorAll(".check").forEach(c=>c.classList.add("hidden"))
+el.querySelector(".check").classList.remove("hidden")
+
+toggleCurrencyDropdown()
+
+renderProducts()
+renderCart()
+
+}
+
+function renderProducts(){
+
+let keyword=document.getElementById("search").value.toLowerCase()
+
+let html=""
+
+products
+.filter(p=>p.name.toLowerCase().includes(keyword))
+.forEach(p=>{
+
+html+=`
+<button onclick="addItem('${p.name}',${p.price})"
+class="btn w-full text-left bg-black/40 hover:bg-black/60 px-4 py-3 rounded-xl flex justify-between fade">
+
+<span>${p.name}</span>
+
+<span class="text-zinc-400">
+${formatPrice(p.price)}
+</span>
+
+</button>
+`
+
+})
+
+document.getElementById("productList").innerHTML=html
+
+}
+
+function addItem(name,price){
+
+let found=cart.find(i=>i.name===name)
+
+if(found) found.qty++
+else cart.push({name,price,qty:1})
+
+renderCart()
+
+}
+
+function changeQty(name,amount){
+
+let item=cart.find(i=>i.name===name)
+
+if(!item) return
+
+item.qty+=amount
+
+if(item.qty<=0)
+cart=cart.filter(i=>i.name!==name)
+
+renderCart()
+
+}
+
+function removeItem(name){
+
+cart=cart.filter(i=>i.name!==name)
+
+renderCart()
+
+}
+
+function addCustom(){
+
+let name=document.getElementById("customName").value
+let price=parseInt(document.getElementById("customPrice").value)
+
+if(!name||!price) return
+
+cart.push({name,price,qty:1})
+
+renderCart()
+
+}
+
+function renderCart(){
+
+let html=""
+let subtotal=0
+
+cart.forEach(i=>{
+
+let total=i.price*i.qty
+subtotal+=total
+
+html+=`
+<div class="flex justify-between items-center bg-black/40 px-4 py-3 rounded-xl fade">
+
+<div>
+
+<div class="font-medium">
+${i.name}
+</div>
+
+<div class="text-sm text-zinc-400">
+${formatPrice(total)}
+</div>
+
+</div>
+
+<div class="flex items-center gap-2">
+
+<button onclick="changeQty('${i.name}',-1)"
+class="bg-zinc-800 px-2 rounded">-</button>
+
+<span>${i.qty}</span>
+
+<button onclick="changeQty('${i.name}',1)"
+class="bg-zinc-800 px-2 rounded">+</button>
+
+<button onclick="removeItem('${i.name}')"
+class="bg-red-600 px-2 rounded">x</button>
+
+</div>
+
+</div>
+`
+
+})
+
+document.getElementById("cartItems").innerHTML=html
+
+updateTotals(subtotal)
+
+}
+
+function updateTotals(subtotal){
+
+let discPercent=parseFloat(document.getElementById("discPercent").value)||0
+let discAmount=parseFloat(document.getElementById("discAmount").value)||0
+
+let discount=0
+
+if(discPercent>0)
+discount=subtotal*(discPercent/100)
+
+if(discAmount>0)
+discount=discAmount
+
+let total=subtotal-discount
+if(total<0) total=0
+
+lastTotal=total
+
+document.getElementById("subtotalText").innerText=formatPrice(subtotal)
+document.getElementById("discountText").innerText="- "+formatPrice(Math.round(discount))
+document.getElementById("totalText").innerText=formatPrice(Math.round(total))
+
+let percent=Math.min(subtotal/200000*100,100)
+document.getElementById("subtotalBar").style.width=percent+"%"
+
+}
+
+function generateID(){
+return "BYTEX-"+Math.random().toString(36).substring(2,10).toUpperCase()
+}
+
+function generateBon(){
+
+currentOrderID = generateID()
+let id = currentOrderID
+let subtotal=0
+let text=""
+
+cart.forEach(i=>{
+
+let total=i.price*i.qty
+subtotal+=total
+
+text+=`• **${i.name}** × ${i.qty}
+  ↳ ${formatPrice(total)}
+
+`
+
+})
+
+let discPercent=parseFloat(document.getElementById("discPercent").value)||0
+let discAmount=parseFloat(document.getElementById("discAmount").value)||0
+
+let discount=0
+
+if(discPercent>0)
+discount=subtotal*(discPercent/100)
+
+if(discAmount>0)
+discount=discAmount
+
+let total=subtotal-discount
+if(total<0) total=0
+
+let now=new Date()
+
+let date=now.toLocaleDateString("id-ID")
+
+let time=now.toLocaleTimeString("id-ID",{
+hour:"2-digit",
+minute:"2-digit",
+second:"2-digit"
+})
+
+let bon=`# ByteX Studio
+
+ID: **${id}**
+${date} • ${time}
+
+${text}
+Subtotal: ${formatPrice(subtotal)}
+Discount: -${formatPrice(Math.round(discount))}
+TOTAL: ${formatPrice(Math.round(total))}
+Bayar di https://tako.id/ByteX`
+
+document.getElementById("receiptPreview").innerText=bon
+
+document.getElementById("openReceiptBtn").classList.remove("hidden")
+
+}
+
+function copyBon(){
+
+navigator.clipboard.writeText(
+document.getElementById("receiptPreview").innerText
+)
+
+}
+
+function openSuccess(){
+
+let items=0
+cart.forEach(i=>items+=i.qty)
+
+let now=new Date()
+
+document.getElementById("successID").innerText=currentOrderID
+
+document.getElementById("successTime").innerText=
+now.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit",second:"2-digit"})
+
+document.getElementById("successItems").innerText=items+" items"
+document.getElementById("successTotal").innerText=formatPrice(lastTotal)
+
+document.getElementById("successModal").classList.remove("hidden")
+document.getElementById("successModal").classList.add("flex")
+
+}
+
+function closeSuccess(){
+document.getElementById("successModal").classList.add("hidden")
+}
+
+function renderReceiptImage(){
+
+let node=document.getElementById("successReceipt")
+
+html2canvas(node,{
+backgroundColor:null,
+scale:3
+}).then(canvas=>{
+
+renderedCanvas=canvas
+
+document.getElementById("imageButtons").classList.remove("hidden")
+
+})
+
+}
+
+function downloadImage(){
+
+if(!renderedCanvas) return
+
+let link=document.createElement("a")
+
+link.download="receipt.png"
+link.href=renderedCanvas.toDataURL()
+
+link.click()
+
+}
+
+async function copyImage(){
+
+if(!renderedCanvas) return
+
+renderedCanvas.toBlob(async blob=>{
+await navigator.clipboard.write([
+new ClipboardItem({ "image/png": blob })
+])
+})
+
+}
+
+</script>
+
 </body>
 </html>
